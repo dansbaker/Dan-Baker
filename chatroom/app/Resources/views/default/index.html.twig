@@ -8,13 +8,66 @@
     <input type="text" id="chat_input"></input>
     <button id="submit_message">Send</button>
 </div>    
+
+
+<script type="text/javascript">
+    //TODO: Move this Javascript off page
+    
+    var polling_interval;
+    $(document).ready(function(){
+        polling_interval = setInterval(poll_for_new_messages, 250);
+    });
+
+    $('#submit_message').click(function(){
+        console.log('submit_message button clicked');
+    });
+
+     $('#chat_input').on('keypress', function (event) {
+         if(event.which === 13){
+            console.log('carriage return on text input detected');
+         }
+    });
+
+    // POST the current value of #chat_input to the 'postmessage' endpoint
+    function submit_chat_message()
+    {
+        var message = $('#chat_input').val();
+        $.post('/postmessage/', { chat_message: message }, function(){
+            //TODO: Post message onto user's own chat window, or wait until that update is received from the server as well?
+            //Immediate update would lead to a better user experience but would require filtering server-side to avoid duplicates.
+          },
+          "json"
+        );
+    }
+
+    function poll_for_new_messages()
+    {
+        $.getJSON('/pollmessages/', function(response){
+            if(response.type=='error')
+            {
+                console.log('An error occured while polling the server for new chat messages');
+            }
+            else if(response.type=='success')
+            {
+                for(i=0;i < response.messages.length; i++) //loop through messages and append them to the chat window;
+                {
+                    var message = response.messages[i];
+                    $('#chat_window').append('<span class="message_timestamp">' + message.timestamp + '</span>'
+                    + '<span class="message_user_name">' + message.user_name + '</span>'
+                    + '<span class="message_content">' + message.content + '</span><br />');
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}
 
 {% block stylesheets %}
 <style>
-    #chat_window { width: 100%; height: 80%; border: 1px solid #777; }
+    body,html { width:100%; height: 100%; background #eee; }
+    #chat_window { width: 100%; height: 80%; border: 1px solid #777; background: #eee; }
     #input_container { height:20%; width: 100%; }
-    #chat_input { float:left; width: 80%; height:100%; margin:0; }
-    #submit_message { float:left; width: 20%; height 100%; }
+    #chat_input { float:left; width: 79%; height:100%; margin:0; }
+    #submit_message { float:left; width: 20%; height 100%; background:#7e7; border:1px solid #5f5}
 </style>
 {% endblock %}
