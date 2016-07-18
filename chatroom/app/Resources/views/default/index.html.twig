@@ -22,20 +22,26 @@
 
     $('#submit_message').click(function(){
         console.log('submit_message button clicked');
+        post_chat_message();
     });
 
      $('#chat_input').on('keypress', function (event) {
          if(event.which === 13){
             console.log('carriage return on text input detected');
+            post_chat_message();
          }
     });
 
     // POST the current value of #chat_input to the 'postmessage' endpoint
-    function submit_chat_message()
+    function post_chat_message()
     {
         var message = $('#chat_input').val();
-        $.post('/postmessage/', { chat_message: message }, function(response){
+        $.post('/postmessage/', { message_content: message }, function(response){
             if(response.type=='error')
+            {
+                alert(response.error_message); //NB: Ugly way to handle errors
+            }
+            else if(response.type=='success') //Message successfully posted
             {
 
             }
@@ -49,7 +55,7 @@
         $.getJSON('/pollmessages/', {last_message_time: last_message_time}, function(response){
             if(response.type=='error')
             {
-                alert(response.error_message);
+                alert(response.error_message); //NB: Ugly way to handle errors
             }
             else if(response.type=='success')
             {

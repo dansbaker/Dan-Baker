@@ -65,8 +65,25 @@ class DefaultController extends Controller
     public function postmessage(Request $request)
     {
         $session = $request->getSession();
-        $session_id = $session->getId();
-       // $this->get('app.chatroom')->postMessagesFrom()
-        $request->query->get('chat_message');
+        if($session->get('user_id') == '') //Prevent unauthenticated users from posting messages;
+        {
+            $response = new Response(json_encode(Array('type' => 'error',
+                                                       'error_message' => 'Not authenticated to post messages')));
+            return $response;
+        }
+        
+         try
+        {
+            $this->get('app.chatroom')->postMessage($session->get('user_id'), $request->get('message_content'));
+            $response = new Response(json_encode(Array('type' => 'success')));
+        }
+        catch(\Exception $e)
+        {
+            $response = new Response(json_encode(Array('type' => 'error',
+                                                       'error_message' => $e->getMessage())));
+        }
+
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;        
     }
 }
