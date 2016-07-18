@@ -21,17 +21,15 @@ class DefaultController extends Controller
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-            'start_time' => date('d/m/Y H:i:s')
+            'start_time' => date('Y-m-d H:i:s')
         ]);
     }
 
     public function pollmessagesAction(Request $request)
     {
-
-         $messages = $this->get('app.chatroom')->getMessages();
         try
         {
-            $messages = $this->get('app.chatroom')->getMessages();
+            $messages = $this->get('app.chatroom')->getMessagesSince($request->query->get('last_message_time'));
             $response = new Response(json_encode(Array('type' => 'success', 
                                                        'messages' => $messages)));
         }

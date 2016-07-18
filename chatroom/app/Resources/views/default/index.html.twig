@@ -14,10 +14,10 @@
     //TODO: Move this Javascript off page
     
     var polling_interval;
-    var last_message_time = '{{ start_time }} ?>';
+    var last_message_time = '{{ start_time }}';
 
     $(document).ready(function(){
-     //   polling_interval = setInterval(poll_for_new_messages, 250);
+    //    polling_interval = setInterval(poll_for_new_messages, 250);
     });
 
     $('#submit_message').click(function(){
@@ -58,11 +58,14 @@
                     {
                         $('#chat_window').append('<span class="message" data-message-id="'+ message.message_id+ '">'
                         + '<span class="message_timestamp">' + message.timestamp + '</span>'
-                        + '<span class="message_user_name">' + message.user_name + '</span>'
+                        + '<span class="message_email_address">' + message.email_address + '</span>'
                         + '<span class="message_content">' + message.content + '</span><br />');
                     }
                 }
-                last_message_time = message.timestamp; //set last_message_time to the time of the last message received;
+                if(typeof message != 'undefined')
+                {
+                    last_message_time = message.timestamp; //set last_message_time to the time of the last message received;
+                }
             }
 
         });
