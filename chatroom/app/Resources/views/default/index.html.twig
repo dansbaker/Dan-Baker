@@ -14,8 +14,10 @@
     //TODO: Move this Javascript off page
     
     var polling_interval;
+    var last_message_time = '{{ start_time }} ?>';
+
     $(document).ready(function(){
-        //polling_interval = setInterval(poll_for_new_messages, 250);
+     //   polling_interval = setInterval(poll_for_new_messages, 250);
     });
 
     $('#submit_message').click(function(){
@@ -42,7 +44,7 @@
 
     function poll_for_new_messages()
     {
-        $.getJSON('/pollmessages/', function(response){
+        $.getJSON('/pollmessages/', {last_message_time: last_message_time}, function(response){
             if(response.type=='error')
             {
                 console.log('An error occured while polling the server for new chat messages');
@@ -52,11 +54,17 @@
                 for(i=0;i < response.messages.length; i++) //loop through messages and append them to the chat window;
                 {
                     var message = response.messages[i];
-                    $('#chat_window').append('<span class="message_timestamp">' + message.timestamp + '</span>'
-                    + '<span class="message_user_name">' + message.user_name + '</span>'
-                    + '<span class="message_content">' + message.content + '</span><br />');
+                    if($('#chat_window').find("[data-message-id='" + message.message_id + "']").length == 0) //only show those messages not already being shown
+                    {
+                        $('#chat_window').append('<span class="message" data-message-id="'+ message.message_id+ '">'
+                        + '<span class="message_timestamp">' + message.timestamp + '</span>'
+                        + '<span class="message_user_name">' + message.user_name + '</span>'
+                        + '<span class="message_content">' + message.content + '</span><br />');
+                    }
                 }
+                last_message_time = message.timestamp; //set last_message_time to the time of the last message received;
             }
+
         });
     }
 </script>
