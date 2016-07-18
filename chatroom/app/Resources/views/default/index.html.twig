@@ -7,6 +7,7 @@
 <div id="input_container">
     <input type="text" id="chat_input"></input>
     <button id="submit_message">Send</button>
+    <a id="logout" href="/?logout=true">Logout</a>
 </div>    
 
 
@@ -17,7 +18,7 @@
     var last_message_time = '{{ start_time }}';
 
     $(document).ready(function(){
-    //    polling_interval = setInterval(poll_for_new_messages, 250);
+        polling_interval = setInterval(poll_for_new_messages, 250);
     });
 
     $('#submit_message').click(function(){
@@ -85,8 +86,12 @@
 <style>
     body,html { width:100%; height: 100%; background #eee; }
     #chat_window { width: 100%; height: 80%; border: 1px solid #777; background: #eee; }
+    #chat_window span { padding-right:10px; }
+    #chat_window .message_timestamp { font-size:small; }
+    #chat_window .message_email_address { color:red; }
     #input_container { height:20%; width: 100%; }
     #chat_input { float:left; width: 79%; height:100%; margin:0; }
-    #submit_message { float:left; width: 20%; height 100%; background:#7e7; border:1px solid #5f5}
+    #submit_message { float:left; width: 20%; height 100%; background:#7e7; border:1px solid #5f5; }
+    #logout { float:right; margin-right:15px; font-size:small; }
 </style>
 {% endblock %}

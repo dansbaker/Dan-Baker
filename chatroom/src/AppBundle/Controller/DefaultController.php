@@ -18,8 +18,9 @@ class DefaultController extends Controller
     {
        
         $session = $request->getSession();
-        if($session->get('user_id') == '' && $request->get('email_address') == '') //User not currently logged in and this is not a login attempt
+        if(($session->get('user_id') == '' && $request->get('email_address') == '') || $request->get('logout') == 'true') //User not currently logged in and this is not a login attempt
         {
+            $session->invalidate();
              return $this->render('default/login.html.twig');
         }
         else if($request->get('email_address') != '' && $request->get('password') != '') //This is a login attempt
@@ -35,6 +36,7 @@ class DefaultController extends Controller
                 $session->set('user_id', $user_id);
              }
         }
+
         
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
@@ -62,7 +64,7 @@ class DefaultController extends Controller
     }
 
 
-    public function postmessage(Request $request)
+    public function postmessageAction(Request $request)
     {
         $session = $request->getSession();
         if($session->get('user_id') == '') //Prevent unauthenticated users from posting messages;

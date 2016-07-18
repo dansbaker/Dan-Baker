@@ -4,3 +4,7 @@ app:
 pollmessages:
     path:     /pollmessages/
     defaults: { _controller: AppBundle:Default:pollmessages }
+
+postmessage:
+    path:     /postmessage/
+    defaults: { _controller: AppBundle:Default:postmessage }
