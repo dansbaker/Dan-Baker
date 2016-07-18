@@ -14,7 +14,7 @@ class ChatRoom
 		}
 	}
 
-	public authenticateUser($email_address, $password)
+	public function authenticateUser($email_address, $password)
 	{
 		$password = md5($password); //Hash password
 		$email_address = $this->db->real_escape_string($email_address); //Sanitise Email Address
