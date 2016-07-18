@@ -14,6 +14,7 @@ class ChatRoom
 		}
 	}
 
+	//Request user_id by email_address and password. Return false if no matching user was found, otherwise return numerical user_id
 	public function authenticateUser($email_address, $password)
 	{
 		$password = md5($password); //Hash password
@@ -28,7 +29,8 @@ class ChatRoom
 		return $user['user_id'];
 	}
 
-	public function getMessagesSince($time) //get messages since the given timestamp
+	//Get messages since the given timestamp. Time must be specified in strtotime compatible format.
+	public function getMessagesSince($time) 
 	{
 		$unix_time = strtotime($time);
 		if($unix_time === false)
@@ -36,9 +38,10 @@ class ChatRoom
 			throw new \Exception('Invalid time specified');
 		}
 		$sql_date = date('Y-m-d H:i:s' , $unix_time); //MySQL formatted date string (santitised);
+
 		$sql = "SELECT messages.message_id, messages.content, messages.timestamp, users.email_address FROM messages 
 		LEFT JOIN users ON messages.user_id = users.user_id WHERE messages.timestamp > '{$sql_date}'";
-
+		
 		$messages = Array();
 		if(!$sql_result = $this->db->query($sql))
 		{

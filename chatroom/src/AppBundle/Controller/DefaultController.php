@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Utils\ChatRoom;
 
 class DefaultController extends Controller
@@ -16,27 +17,12 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-       
+        
         $session = $request->getSession();
-        if(($session->get('user_id') == '' && $request->get('email_address') == '') || $request->get('logout') == 'true') //User not currently logged in and this is not a login attempt
+        if($session->get('user_id') == '')
         {
-            $session->invalidate();
-             return $this->render('default/login.html.twig');
+            return new RedirectResponse('/authenticate/');
         }
-        else if($request->get('email_address') != '' && $request->get('password') != '') //This is a login attempt
-        {
-             $user_id = $this->get('app.chatroom')->authenticateUser($request->get('email_address'), $request->get('password'));
-             if($user_id === false)
-             {
-                $session->getFlashBag()->add('warning', 'Incorrect Login Credentials');
-                return $this->render('default/login.html.twig');
-             }
-             else
-             {
-                $session->set('user_id', $user_id);
-             }
-        }
-
         
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
@@ -74,7 +60,7 @@ class DefaultController extends Controller
             return $response;
         }
         
-         try
+        try
         {
             $this->get('app.chatroom')->postMessage($session->get('user_id'), $request->get('message_content'));
             $response = new Response(json_encode(Array('type' => 'success')));

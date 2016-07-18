@@ -5,9 +5,9 @@
 </div>
 <div style="clear:both;"></div>
 <div id="input_container">
-    <input type="text" id="chat_input"></input>
+    <textarea id="chat_input"></textarea>
     <button id="submit_message">Send</button>
-    <a id="logout" href="/?logout=true">Logout</a>
+    <a id="logout" href="/authenticate/?logout=true">Logout</a>
 </div>    
 
 
@@ -44,7 +44,7 @@
             }
             else if(response.type=='success') //Message successfully posted
             {
-
+                $('#chat_input').val(''); //remove message from textbox
             }
           },
           "json"
