@@ -1,3 +1,6 @@
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
+pollmessages:
+    path:     /pollmessages/
+    defaults: { _controller: AppBundle:Default:pollmessages }
