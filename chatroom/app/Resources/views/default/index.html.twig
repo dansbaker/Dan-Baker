@@ -34,9 +34,11 @@
     function submit_chat_message()
     {
         var message = $('#chat_input').val();
-        $.post('/postmessage/', { chat_message: message }, function(){
-            //TODO: Post message onto user's own chat window, or wait until that update is received from the server as well?
-            //Immediate update would lead to a better user experience but would require filtering server-side to avoid duplicates.
+        $.post('/postmessage/', { chat_message: message }, function(response){
+            if(response.type=='error')
+            {
+
+            }
           },
           "json"
         );
@@ -47,7 +49,7 @@
         $.getJSON('/pollmessages/', {last_message_time: last_message_time}, function(response){
             if(response.type=='error')
             {
-                console.log('An error occured while polling the server for new chat messages');
+                alert(response.error_message);
             }
             else if(response.type=='success')
             {

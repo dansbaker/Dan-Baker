@@ -16,8 +16,25 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-       $session = $request->getSession();
        
+        $session = $request->getSession();
+        if($session->get('user_id') == '' && $request->get('email_address') == '') //User not currently logged in and this is not a login attempt
+        {
+             return $this->render('default/login.html.twig');
+        }
+        else if($request->get('email_address') != '' && $request->get('password') != '') //This is a login attempt
+        {
+             $user_id = $this->get('app.chatroom')->authenticateUser($email_address, $password);
+             if($user_id === false)
+             {
+                $session->getFlashBag()->add('warning', 'Incorrect Login Credentials');
+             }
+             else
+             {
+                $session->set('user_id', $user_id);
+             }
+        }
+        
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
@@ -36,10 +53,19 @@ class DefaultController extends Controller
         catch(\Exception $e)
         {
             $response = new Response(json_encode(Array('type' => 'error',
-                                                       'message' => $e->getMessage())));
+                                                       'error_message' => $e->getMessage())));
         }
 
         $response->headers->set('Content-Type', 'application/json');
         return $response;        
+    }
+
+
+    public function postmessage(Request $request)
+    {
+        $session = $request->getSession();
+        $session_id = $session->getId();
+       // $this->get('app.chatroom')->postMessagesFrom()
+        $request->query->get('chat_message');
     }
 }

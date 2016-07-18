@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>Login to chat room</h1>
+	<form method="POST">
+		<label for="email_address">Email Address</label>
+			<input id="email_address"  name="email_address" type="text" />
+
+		<label for="password">Password</label>
+			<input id="password" name="password" type="password" />
+
+		<input type="submit" value="Login"></input>
+
+	</form>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body,html { width:100%; height: 100%; background #eee; }
+</style>
+{% endblock %}

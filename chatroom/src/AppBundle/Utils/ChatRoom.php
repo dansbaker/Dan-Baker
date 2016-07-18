@@ -14,7 +14,18 @@ class ChatRoom
 		}
 	}
 
-	function getMessagesSince($time)
+	public authenticateUser($email_address, $password)
+	{
+		$password = md5($password); //Hash password
+		$email_address = $this->db->real_escape_string($email_address); //Sanitise Email Address
+		$sql = "SELECT user_id FROM users WHERE email_address = '{$email_address}' AND password = '{$password}';";
+		$sql_result = $this->db->query($sql);
+		if($sql_result->num_rows == 0) return false; //matching user not found
+		$user = $sql_result->fetch_assoc();
+		return $user['user_id'];
+	}
+
+	public function getMessagesSince($time) //get messages since the given timestamp
 	{
 		$unix_time = strtotime($time);
 		if($unix_time === false)
@@ -35,4 +46,6 @@ class ChatRoom
 
 		return $messages;
 	}
+
+
 }
