@@ -24,10 +24,11 @@ class DefaultController extends Controller
         }
         else if($request->get('email_address') != '' && $request->get('password') != '') //This is a login attempt
         {
-             $user_id = $this->get('app.chatroom')->authenticateUser($email_address, $password);
+             $user_id = $this->get('app.chatroom')->authenticateUser($request->get('email_address'), $request->get('password'));
              if($user_id === false)
              {
                 $session->getFlashBag()->add('warning', 'Incorrect Login Credentials');
+                return $this->render('default/login.html.twig');
              }
              else
              {
