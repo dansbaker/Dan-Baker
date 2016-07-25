@@ -11,3 +11,4 @@ services:
 
   app.chatroom:
         class: AppBundle\Utils\ChatRoom
+        arguments: ["@service_container"]

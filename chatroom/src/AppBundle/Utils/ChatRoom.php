@@ -1,12 +1,19 @@
 <?php
 namespace AppBundle\Utils;
+use Entity\Message;
+use Symfony\Component\DependancyInjection\Container;
 
-class ChatRoom
+
+class ChatRoom 
 {
 	private $db; //Hold the mysqli connection
+	private $container;
 
-	function __construct()
+
+
+	function __construct($c)
 	{
+		$this->container = $c;
 		$this->db = new \mysqli('127.0.0.1', 'chatroom', 'h2rTRKvBhVnBJ8jS', 'chatroom');	
 		if (mysqli_connect_errno()) 
 		{
@@ -57,15 +64,21 @@ class ChatRoom
 		return $messages;
 	}
 
-	public function postMessage($user_id, $message_content)
+	public function postMessage($user_id, $content)
 	{
-		$message_content = $this->db->real_escape_string($message_content); //sanitise message content
+
+		$message = new \AppBundle\Entity\Message($user_id, $content);
+		$em = $this->getDoctrine()->getManager();
+		$em->persist($product);
+		$em->flush();
+		return true;
+		/*$message_content = $this->db->real_escape_string($message_content); //sanitise message content
 		$sql = "INSERT INTO messages (message_id, user_id, content, timestamp) VALUES (NULL, {$user_id}, '{$message_content}', NOW());";
 		if(!$sql_result = $this->db->query($sql))
 		{
 			throw new \Exception('Unable to insert message into database');	
 		} 
-		return true;
+		return true;*/
 	}
 
 
