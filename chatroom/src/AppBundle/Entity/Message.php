@@ -41,7 +41,16 @@ class Message implements JsonSerializable
         $this->user = $user;
         $this->content = $content;
         $this->timestamp = new \DateTime();
+    }
 
+    /**
+    *
+    */
+    public function jsonSerialize() {
+        return Array('content' => $this->content,
+                         'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),
+                         'email_address' => $this->user->getEmailAddress());
+        
     }
 
     /**
