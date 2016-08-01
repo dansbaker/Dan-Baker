@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * @ORM\Entity
@@ -25,7 +26,24 @@ class User
       */
     private $password_hash;
 
+    private $entityManager;
 
+    public function __construct(\Doctrine\ORM\EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
+    public function findById($user_id)
+    {
+        $user = $this->entityManager->find('\AppBundle\Entity\User', $user_id);
+        if(!$user instanceof \AppBundle\Entity\User)
+        {
+            throw new \Exception('Unknown User ID in postMessage'); 
+        }
+        return $user;
+    }
+    
     /**
      * Get userId
      *

@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use \AppBundle\Entity\User;
 use JsonSerializable;
 
@@ -33,23 +34,53 @@ class Message implements JsonSerializable
       */
     private $timestamp;
 
+
+    private $entityManager;
+    public function __construct(\Doctrine\ORM\EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
      /**
      * Create a new message instance
      */
-    public function __construct($user, $content)
+    public function saveMessage($user, $content)
     {
-        $this->user = $user;
-        $this->content = $content;
-        $this->timestamp = new \DateTime();
+        $this->setUser($user);
+        $this->setContent($content);
+        $this->setTimestamp(new \DateTime());
+        $this->entityManager->persist($this);
+        $this->entityManager->flush();
+        return true;
     }
+
+    /**
+    * Get messages since data
+    */
+    public function getMessagesSince($time)
+    { 
+        $unix_time = strtotime($time);
+        if($unix_time === false)
+        {
+            throw new \Exception('Invalid time specified');
+        }
+        $sql_date = date('Y-m-d H:i:s' , $unix_time); //MySQL formatted date string (santitised);
+        $queryBuilder = $this->entityManager->getRepository(Message::class)->createQueryBuilder('e');
+        $queryBuilder->where('e.timestamp > :sql_date');
+        $queryBuilder->setParameter('sql_date', $sql_date);
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 
     /**
     *
     */
     public function jsonSerialize() {
-        return Array('content' => $this->content,
-                         'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),
-                         'email_address' => $this->user->getEmailAddress());
+        return Array('message_id' => $this->message_id,
+                     'content' => $this->content,
+                     'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),
+                     'email_address' => $this->user->getEmailAddress());
         
     }
 

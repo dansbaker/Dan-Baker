@@ -11,7 +11,7 @@ class ChatRoom extends Controller
 
 
 
-	function __construct($c)
+	function __construct(\appDevDebugProjectContainer $c)
 	{
 		$this->container = $c;
 		$this->db = new \mysqli('127.0.0.1', 'chatroom', 'ApfAG3WcEDf0oPY9', 'chatroom');	
@@ -39,35 +39,14 @@ class ChatRoom extends Controller
 	//Get messages since the given timestamp. Time must be specified in strtotime compatible format.
 	public function getMessagesSince($time) 
 	{
-
-		$unix_time = strtotime($time);
-		if($unix_time === false)
-		{
-			throw new \Exception('Invalid time specified');
-		}
-		$sql_date = date('Y-m-d H:i:s' , $unix_time); //MySQL formatted date string (santitised);
-
-
-		$em = $this->getDoctrine()->getManager();
-				
-		$messages = $em->createQuery("SELECT e FROM AppBundle:Message e WHERE e.timestamp > '{$sql_date}'")->getResult();
-
+		$messages = $this->get('app.messages')->getMessagesSince($time);
 		return $messages;
 	}
 
 	public function postMessage($user_id, $content)
 	{
-		$em = $this->getDoctrine()->getManager();
-		$user = $em->find('\AppBundle\Entity\User', $user_id);
-		if(!$user instanceof \AppBundle\Entity\User)
-		{
-			throw new \Exception('Unknown User ID in postMessage');	
-		}
-
-		$message = new \AppBundle\Entity\Message($user, $content);
-		
-		$em->persist($message);
-		$em->flush();
+		$user = $this->get('app.users')->findById($user_id);
+		$this->get('app.messages')->saveMessage($user, $content);	
 		return true;
 	}
 

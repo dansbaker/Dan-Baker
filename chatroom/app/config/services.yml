@@ -12,3 +12,11 @@ services:
   app.chatroom:
         class: AppBundle\Utils\ChatRoom
         arguments: ["@service_container"]
+ 
+  app.messages:
+        class: AppBundle\Entity\Message
+        arguments: ["@doctrine.orm.entity_manager"]
+
+  app.users:
+        class: AppBundle\Entity\User
+        arguments: ["@doctrine.orm.entity_manager"]
