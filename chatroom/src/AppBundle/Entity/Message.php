@@ -1,25 +1,27 @@
 <?php
 namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use \AppBundle\Entity\User;
+use JsonSerializable;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="message")
+ * @ORM\Table(name="messages")
  */
-class Message
+class Message implements JsonSerializable
 {
-	 /**
+     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $message_id;
 
-
-    /**
-     * @ORM\Column(type="integer")
+     /** 
+     * @ORM\ManyToOne(targetEntity="User" ) 
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
-     private $user_id;
+     private $user;
 
     /**
      * @ORM\Column(type="text")
@@ -29,40 +31,27 @@ class Message
      /** 
       * @ORM\Column(type="datetime") 
       */
-    private $password;
-
+    private $timestamp;
 
      /**
      * Create a new message instance
      */
-    public function __construct($user_id, $content)
+    public function __construct($user, $content)
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
         $this->content = $content;
+        $this->timestamp = new \DateTime();
+
     }
 
     /**
-     * Get id
+     * Get messageId
      *
      * @return integer
      */
-    public function getId()
+    public function getMessageId()
     {
-        return $this->id;
-    }
-
-    /**
-     * Set userId
-     *
-     * @param integer $userId
-     *
-     * @return Message
-     */
-    public function setUserId($userId)
-    {
-        $this->user_id = $userId;
-
-        return $this;
+        return $this->message_id;
     }
 
     /**
@@ -89,5 +78,51 @@ class Message
         return $this->content;
     }
 
-   
+    /**
+     * Set timestamp
+     *
+     * @param \DateTime $timestamp
+     *
+     * @return Message
+     */
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get timestamp
+     *
+     * @return \DateTime
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Message
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
 }
